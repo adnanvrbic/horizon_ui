@@ -76,7 +76,7 @@
     "@tiptap/extension-placeholder": "^2.10.3",
     "@tiptap/extension-subscript": "^2.10.3",
     "@tiptap/extension-superscript": "^2.10.3",
-    "@tiptap/extension-underline": "^2.10.3",
+    "@tiptap/extension-underline": "^2.11.7",
     "@types/mapbox-gl": "3.4.1",
     "@types/node": "22.10.2",
     "@types/webfontloader": "1.6.38",
