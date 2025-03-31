@@ -78,7 +78,7 @@
     "@tiptap/extension-superscript": "^2.10.3",
     "@tiptap/extension-underline": "^2.10.3",
     "@types/mapbox-gl": "3.4.1",
-    "@types/node": "22.10.2",
+    "@types/node": "22.13.14",
     "@types/webfontloader": "1.6.38",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
