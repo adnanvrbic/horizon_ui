@@ -16,6 +16,13 @@ However, if you wish to get actual prop types in `.vue` imports (for example to 
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
+### Template documentation:
+
+[Vuexy](https://demos.pixinvent.com/vuexy-vuejs-admin-template/documentation/guide/)
+
+### API is available on this domain:
+https://allsafe.dev/api
+
 ## Project Setup
 
 ```sh
