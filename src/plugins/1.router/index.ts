@@ -4,6 +4,7 @@ import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router/auto'
 
 import { createRouter, createWebHistory } from 'vue-router/auto'
+import { routes } from 'vue-router/auto-routes';
 
 function recursiveLayouts(route: RouteRecordRaw): RouteRecordRaw {
   if (route.children) {
@@ -18,6 +19,7 @@ function recursiveLayouts(route: RouteRecordRaw): RouteRecordRaw {
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  routes,
   scrollBehavior(to) {
     if (to.hash)
       return { el: to.hash, behavior: 'smooth', top: 60 }
