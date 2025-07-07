@@ -34,7 +34,7 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
 const triggerLoginEvent = async () => {
   try {
-    const response = await axios.post('/api/api/v1.0/auth/login', {
+    const response = await axios.post('/local/api/v1.0/auth/login', {
       email: form.value.email,
       password: form.value.password
     })

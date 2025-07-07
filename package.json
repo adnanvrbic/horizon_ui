@@ -31,7 +31,6 @@
     "apexcharts": "4.7.0",
     "axios": "^1.9.0",
     "chart.js": "4.4.9",
-    "cookie-es": "2.0.0",
     "crypto-js": "^4.2.0",
     "destr": "2.0.5",
     "eslint-plugin-regexp": "2.7.0",

@@ -86,12 +86,12 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      // Proxy requests starting with /api to https://allsafe.dev
-      '/api': {
+      // Proxy requests starting with /local to https://allsafe.dev
+      '/local': {
         target: 'https://allsafe.dev',
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, ''),
-        secure: false // if the target has self-signed certs (optional)
+        rewrite: path => path.replace(/^\/local/, ''),
+        secure: false
       }
     }
   },

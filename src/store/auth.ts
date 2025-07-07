@@ -2,17 +2,19 @@ import Cookies from 'js-cookie'
 import CryptoJS from 'crypto-js'
 
 const TOKEN_KEY = 'auth_token'
-const SECRET_KEY = 'my_super_secret'
+const SECRET_KEY = 'L(}]xd#5(K92/'
+const MINUTES_IN_DAY = 1440
 
 export function setToken(token: any, ttlMinutes = 5) {
   const payload = {
     token,
-    expiresAt: Date.now() + 60 * 1000
+    expiresAt: Date.now() + ttlMinutes * 60 * 1000,
   }
+  
   const stringified = JSON.stringify(payload)
   const encrypted = CryptoJS.AES.encrypt(stringified, SECRET_KEY).toString()
   Cookies.set(TOKEN_KEY, encrypted, {
-    expires: ttlMinutes / (60 * 24),   
+    expires: ttlMinutes / MINUTES_IN_DAY,  
     path: '/',
   })
 }
@@ -24,6 +26,7 @@ export function getToken() {
   try {
     const bytes = CryptoJS.AES.decrypt(encrypted, SECRET_KEY)
     const decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+    console.log(decrypted)
 
     if (Date.now() > decrypted.expiresAt) {
       removeToken()
