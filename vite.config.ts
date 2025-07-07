@@ -4,7 +4,6 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { VueRouterAutoImports, getPascalCaseRouteName } from 'unplugin-vue-router'
-import VueRouter from 'unplugin-vue-router/vite'
 import { defineConfig } from 'vite'
 import VueDevTools from 'vite-plugin-vue-devtools'
 import Layouts from 'vite-plugin-vue-layouts'
@@ -14,17 +13,6 @@ import svgLoader from 'vite-svg-loader'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    // Docs: https://github.com/posva/unplugin-vue-router
-    // ℹ️ This plugin should be placed before vue plugin
-    VueRouter({
-      getRouteName: routeNode => {
-        // Convert pascal case to kebab case
-        return getPascalCaseRouteName(routeNode)
-          .replace(/([a-z\d])([A-Z])/g, '$1-$2')
-          .toLowerCase()
-      },
-
-    }),
     vue({
       template: {
         compilerOptions: {
@@ -95,6 +83,17 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 5000,
+  },
+  server: {
+    proxy: {
+      // Proxy requests starting with /local to https://allsafe.dev
+      '/local': {
+        target: 'https://allsafe.dev',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/local/, ''),
+        secure: false
+      }
+    }
   },
   optimizeDeps: {
     exclude: ['vuetify'],
