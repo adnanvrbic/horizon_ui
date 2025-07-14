@@ -8,7 +8,7 @@ import Default from '@/layouts/default.vue'
 const routes = [
   {
     path: '/login',
-    name: 'Login',
+    name: 'login',
     component: Login,
   },
   {
@@ -18,7 +18,7 @@ const routes = [
     children: [
       {
         path: 'home',
-        name: 'Home',
+        name: 'home',
         component: Index,
       },
       {

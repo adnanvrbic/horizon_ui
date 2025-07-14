@@ -1,43 +1,47 @@
-// // Ported from [Nuxt](https://github.com/nuxt/nuxt/blob/main/packages/nuxt/src/app/composables/cookie.ts)
+import { ref, watch, type Ref } from 'vue'
+import Cookies from 'js-cookie'
+import { destr } from 'destr'
 
-// import type { CookieParseOptions, CookieSerializeOptions } from 'cookie-es'
-// // import { parse, serialize } from 'cookie-es'
-// import { destr } from 'destr'
+export interface CookieOptions<T = any> extends Cookies.CookieAttributes {
+  decode?(value: string): T
+  encode?(value: T): string
+  default?: () => T | Ref<T>
+  watch?: boolean | 'shallow'
+}
 
-// type _CookieOptions = Omit<CookieSerializeOptions & CookieParseOptions, 'decode' | 'encode'>
+export type CookieRef<T> = Ref<T>
 
-// export interface CookieOptions<T = any> extends _CookieOptions {
-//   decode?(value: string): T
-//   encode?(value: T): string
-//   default?: () => T | Ref<T>
-//   watch?: boolean | 'shallow'
-// }
+const CookieDefaults: CookieOptions<any> = {
+  path: '/',
+  watch: true,
+  decode: val => destr(decodeURIComponent(val)),
+  encode: val => encodeURIComponent(typeof val === 'string' ? val : JSON.stringify(val)),
+}
 
-// export type CookieRef<T> = Ref<T>
+export const useCookie = <T = string | null | undefined>(
+  name: string,
+  _opts?: CookieOptions<T>
+): CookieRef<T> => {
+  const opts = { ...CookieDefaults, ..._opts }
 
-// const CookieDefaults: CookieOptions<any> = {
-//   path: '/',
-//   watch: true,
-//   decode: val => destr(decodeURIComponent(val)),
-//   encode: val => encodeURIComponent(typeof val === 'string' ? val : JSON.stringify(val)),
-// }
+  const rawValue = Cookies.get(name)
+  const cookie = ref<T | undefined>(
+    rawValue !== undefined ? opts.decode?.(rawValue) : resolveDefault<T>(opts.default)
+  )
+  if (opts.watch) {
+    watch(cookie, (val) => {
+      if (val === null || val === undefined) {
+        Cookies.remove(name, { path: opts.path })
+      } else {
+        Cookies.set(name, opts.encode?.(val) ?? '', opts)
+      }
+    }, { deep: opts.watch !== 'shallow' })
+  }
 
-// export const useCookie = <T = string | null | undefined>(name: string, _opts?: CookieOptions<T>): CookieRef<T> => {
-//   const opts = { ...CookieDefaults, ..._opts || {} }
-//   const cookies = parse(document.cookie, opts)
+  return cookie as CookieRef<T>
+}
 
-//   const cookie = ref<T | undefined>(cookies[name] as any ?? opts.default?.())
-
-//   watch(cookie, () => {
-//     document.cookie = serializeCookie(name, cookie.value, opts)
-//   })
-
-//   return cookie as CookieRef<T>
-// }
-
-// function serializeCookie(name: string, value: any, opts: CookieSerializeOptions = {}) {
-//   if (value === null || value === undefined)
-//     return serialize(name, value, { ...opts, maxAge: -1 })
-
-//   return serialize(name, value, { ...opts, maxAge: 60 * 60 * 24 * 30 })
-// }
+function resolveDefault<T>(def?: () => T | Ref<T>): T | undefined {
+  const value = typeof def === 'function' ? def() : def
+  return isRef(value) ? value.value : value
+}

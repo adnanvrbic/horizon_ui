@@ -10,7 +10,7 @@ export function setToken(token: any, ttlMinutes = 5) {
     token,
     expiresAt: Date.now() + ttlMinutes * 60 * 1000,
   }
-  
+
   const stringified = JSON.stringify(payload)
   const encrypted = CryptoJS.AES.encrypt(stringified, SECRET_KEY).toString()
   Cookies.set(TOKEN_KEY, encrypted, {
@@ -26,7 +26,6 @@ export function getToken() {
   try {
     const bytes = CryptoJS.AES.decrypt(encrypted, SECRET_KEY)
     const decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-    console.log(decrypted)
 
     if (Date.now() > decrypted.expiresAt) {
       removeToken()

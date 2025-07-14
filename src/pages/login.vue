@@ -44,12 +44,19 @@ const triggerLoginEvent = async () => {
     setToken(token, expiresIn)
     router.push('/home');
   }
-  catch (err: any) {
-    switch (err.status) {
-    case 401:
-      error.value = err.response.data.detail
+  catch (err: unknown) {
+    if (axios.isAxiosError(err) && err.response) {
+      switch (err.response.status) {
+        case 401:
+          error.value = err.response.data.detail
+          break
+        default:
+          error.value = 'An error occurred'
+      }
+    } else {
+      error.value = 'Unexpected error'
+    }
   }
-}
 }
 </script>
 
