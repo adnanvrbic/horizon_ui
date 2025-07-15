@@ -9,19 +9,17 @@ import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
-
-definePage({
-  meta: {
-    layout: 'blank',
-    public: true,
-  },
-})
+import axios from 'axios'
+import { setToken } from '../store/auth'
 
 const form = ref({
   email: '',
   password: '',
   remember: false,
 })
+
+const error = ref('')
+const router = useRouter();
 
 const isPasswordVisible = ref(false)
 
@@ -33,6 +31,33 @@ const authThemeImg = useGenerateImageVariant(
   true)
 
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
+
+const triggerLoginEvent = async () => {
+  try {
+    const response = await axios.post('/local/api/v1.0/auth/login', {
+      email: form.value.email,
+      password: form.value.password
+    })
+    const token = response.data.accessToken;
+    const expiresIn = response.data.expiresIn || 3600;
+
+    setToken(token, expiresIn)
+    router.push('/home');
+  }
+  catch (err: unknown) {
+    if (axios.isAxiosError(err) && err.response) {
+      switch (err.response.status) {
+        case 401:
+          error.value = err.response.data.detail
+          break
+        default:
+          error.value = 'An error occurred'
+      }
+    } else {
+      error.value = 'Unexpected error'
+    }
+  }
+}
 </script>
 
 <template>
@@ -64,14 +89,6 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
             class="auth-illustration mt-16 mb-2"
           />
         </div>
-
-        <img
-          class="auth-footer-mask flip-in-rtl"
-          :src="authThemeMask"
-          alt="auth-footer-mask"
-          height="280"
-          width="100"
-        >
       </div>
     </VCol>
 
@@ -94,7 +111,7 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
           </p>
         </VCardText>
         <VCardText>
-          <VForm @submit.prevent="() => {}">
+          <VForm @submit.prevent="triggerLoginEvent">
             <VRow>
               <!-- email -->
               <VCol cols="12">
@@ -118,7 +135,7 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 />
-
+                <p style="color: red; padding-top: 5%; text-align: center;">{{ error }}</p>
                 <div class="d-flex align-center flex-wrap justify-space-between my-6">
                   <VCheckbox
                     v-model="form.remember"
